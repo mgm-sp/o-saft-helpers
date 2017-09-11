@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+# 1. Scan the Network using
+#    o-saft +cipherall [additionalargs] <somehost> > <o-saft-inile>
+# 2. Import all your files into one yaml file
+#    o-saft-build-yaml <my-yaml-db.yaml> <o-saft-infile>
+# 3. use o-saft-build-csv to transform the yaml into a csv
+#    o-saft-build-csv <my-yaml-db.yaml> > <my-csv.csv>
+
+if ARGV.size != 1
+	puts "usage: #{File.basename $0} <infile.yaml> > scan.csv"
+	exit
+end
+require "yaml"
+require "pp"
+hosts = YAML::load_file(ARGV[0])
+
+all_ciphers = {}
+hosts.each{|id,scan|
+	scan.each{|protocol,ciphers|
+		all_ciphers[protocol] ||= []
+		all_ciphers[protocol] += ciphers
+		all_ciphers[protocol].uniq!
+		all_ciphers[protocol].sort!
+	}
+}
+
+require "csv"
+csv_string = CSV.generate {|csv|
+
+	protocols = all_ciphers.keys.sort
+
+	## build header
+	line = ["Host"]
+	protocols.each{|p|
+		line += [p]*all_ciphers[p].size
+	}
+	csv << line
+	line = ["Host"]
+	protocols.each{|p|
+		line += all_ciphers[p]
+	}
+	csv << line
+
+	## body
+	hosts.each{|id,scan|
+		line = [id]
+		protocols.each{|p|
+			all_ciphers[p].each{|c|
+				line << ((scan[p] && scan[p].include?(c)) ? 1 : 0)
+			}
+
+		}
+		csv << line
+	}
+}
+
+puts csv_string

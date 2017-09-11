@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+# 1. Scan the Network using
+#    o-saft +cipherall [additionalargs] <somehost> > <o-saft-inile>
+# 2. Import all your files into one yaml file
+#    o-saft-build-yaml <my-yaml-db.yaml> <o-saft-infile>
+# 3. use o-saft-build-csv to transform the yaml into a csv
+#    o-saft-build-csv <my-yaml-db.yaml> <my-csv.csv>
+
+if ARGV.size != 2
+	puts "usage: #{File.basename $0} <outfile.yaml> <o-saft-infile>"
+	exit
+end
+
+outfile = ARGV[0]
+infile = ARGV[1]
+
+require "yaml"
+require "pp"
+if File.exists?(outfile)
+	out = YAML::load_file(outfile)
+else
+	out = {}
+end
+
+require "csv"
+File.open(infile,"r").each{|line|
+	# "194.6.228.202, 443, TLSv12 (0x0303),    SNI, Server Order, 0x03000041, CAMELLIA128-SHA             , RSA_WITH_CAMELLIA_128_CBC_SHA     \n"
+	#           ip     ,   port    ,   TLS     id  ,   SNI      server id   openssl  rfcname  additional
+	regex = /^([^,]*) *, *([^,]*) *, *([^ ]*) [^,]*, *([^,]*) *,[^,]*,[^,]*,[^,]*, *([^, ]*) *(.*) *$/
+	if line =~ regex
+		row = line.scan(regex).flatten
+		id = "#{row[0]}:#{row[1]}"
+		if row[3] == "no SNI"
+			sni = "no_sni"
+		elsif row[3] == "SNI"
+			sni = "sni=#{row[0]}"
+		else
+			sni = "sni=#{row[3].scan(/^SNI \((.*)\)$/)[0][0]}"
+		end
+		id = "#{id} (#{sni})"
+		out[id] ||= {}
+		out[id][row[2]] ||= []
+		out[id][row[2]] << row[4]
+		out[id][row[2]].uniq!
+	else
+		STDERR.puts line
+	end
+}
+
+
+File.open(outfile,"w"){|f|
+	f << out.to_yaml
+}
