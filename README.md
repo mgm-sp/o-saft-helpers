@@ -7,3 +7,9 @@ This Repository contains a bunch of helper Scripts for O-Saft:
   make a screenshot-friendly output for reports of the o-saft output
 * o-saft-important-checks
   grep for the important checks of an o-saft scan
+
+# Author
+Benjamin Kellermann
+
+# License
+GPLv3, see License
