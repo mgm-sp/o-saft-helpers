@@ -1,5 +1,6 @@
 #!/bin/sh
 # grep for the important checks of an o-saft scan
+# Author: Benjamin Kellermann, License: GPLv3
 # Usage:
 #   1. o-saft +check --trace-key --header <my-host> > my-host.o-saft
 #   2. o-saft-important-checks my-host.o-saft

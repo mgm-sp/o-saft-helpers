@@ -1,5 +1,6 @@
 #!/bin/sh
 # make a screenshot-friendly output for reports of the o-saft output
+# Author: Benjamin Kellermann, License: GPLv3
 # Usage:
 #   1. o-saft +check --trace-key --header www.example.org > www.example.org.o-saft
 #   2. o-saft-important-weakciphers www.example.org.o-saft

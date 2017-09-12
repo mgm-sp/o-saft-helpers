@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-# 1. Scan the Network using
+# Author: Benjamin Kellermann, License: GPLv3
+# 1. Scan the Network using:
 #    o-saft +cipherall [additionalargs] <somehost> > <o-saft-inile>
 # 2. Import all your files into one yaml file
 #    o-saft-build-yaml <my-yaml-db.yaml> <o-saft-infile>
