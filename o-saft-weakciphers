@@ -2,15 +2,15 @@
 # make a screenshot-friendly output for reports of the o-saft output
 # Author: Benjamin Kellermann, License: GPLv3
 # Usage:
-#   1. o-saft +check --trace-key --header www.example.org > www.example.org.o-saft
-#   2. o-saft-important-weakciphers www.example.org.o-saft
+#   1. o-saft +cipherall --trace-key --header www.example.org > www.example.org.o-saft
+#   2. o-saft-weakciphers www.example.org.o-saft
 
 W='\033[1;37m'
 S='\033[1;33m' # Specialchars
 C='\033[1;36m' # Commands
 A='\033[1;34m' # Arguments
 N='\033[0m'
-echo $S\$$N ${C}o-saft$A --trace-key --header +cipher$N `basename $1 .o-saft` $S\|$N \\
+echo $S\$$N ${C}o-saft$A --trace-key --header +cipherall$N `basename $1 .o-saft` $S\|$N \\
 echo \\t${C}grep$A -i$N '^=\|yes.weak\|yes.low\|yes.medium' $S'|' $N \\
 echo \\t${C}grep$A -i -B3$N '.*yes.weak\|.*yes.low\|.*yes.medium'
 
